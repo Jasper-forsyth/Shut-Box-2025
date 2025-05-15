@@ -120,9 +120,9 @@ public class GUIDriver2 extends Application {
 			} else {
 				p2s += roundsum; // adds final round score
 				if (p1s > p2s) {
-					messageover.setText("Player One Won" + " Player one score: " + p1s + " Player two score: " + p2s);
-				} else if (p2s > p1s) {
 					messageover.setText("Player Two Won" + " Player one score: " + p1s + " Player two score: " + p2s);
+				} else if (p2s > p1s) {
+					messageover.setText("Player One Won" + " Player one score: " + p1s + " Player two score: " + p2s);
 				} else {
 					messageover.setText("Its A Tie" + " Player one score: " + p1s + " Player two score: " + p2s);
 				}
