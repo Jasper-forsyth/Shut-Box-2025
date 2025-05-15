@@ -30,7 +30,9 @@ public class Tile {
 	public boolean isSelected() {
 		return selected;
 	}
-	
+	public void reset() {
+		isDown = false;
+	}
 	public int getValue() {
 		return value;
 	}

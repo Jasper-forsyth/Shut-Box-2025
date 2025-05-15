@@ -21,6 +21,7 @@ public class GUIDriver2 extends Application {
 	int currentround = 1;
 
 	boolean gameover = false;
+	boolean singledie = false;
 
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -34,7 +35,7 @@ public class GUIDriver2 extends Application {
 			button.setStyle("-fx-background-color: #FFFFFF;");
 			tileBtns[i] = button;
 		}
-		Label answer= new Label("");
+		Label answer = new Label("");
 		// Create the markers
 		Tile[] markers = new Tile[9];
 		for (int i = 0; i < markers.length; i++) {
@@ -85,23 +86,47 @@ public class GUIDriver2 extends Application {
 
 		quit.setOnAction(e -> {
 			int roundsum = 0;
+			// adds up markers value if the makers are not down 
 			for (Tile t : markers) {
 				if (!t.isDown()) {
 					roundsum += t.getValue();
 				}
+				t.reset(); // too reset the markers back to original state
+
 			}
-			p1s += roundsum;
-			System.out.println(p1s);
-			if (currentround < 3) {
+			// reset the buttons
+			for (Button b : tileBtns) {
+				b.setStyle("-fx-background-color: #FFFFFF;");
+				b.setDisable(false);
+			}
+
+			// sees if the round is less then 3 then makes it 1 more
+			if (currentplayer == 1 && currentround < 3) {
 				currentround++;
-
-			}
-
-			else if (currentplayer == 1) {
+				p1s += roundsum;
+				
+			
+			// sees if player is 1 and then switches and resets round amount
+			} else if (currentplayer == 1) {
+				p1s += roundsum;
 				currentplayer = 2;
 				currentround = 1;
-			} else if (currentplayer == 2) {
-				messageover.setText(String.valueOf(p1s));
+			}
+			// sees if player is 2 and round is less then 3 then increase round and score 
+			else if (currentplayer == 2 && currentround < 3) {
+				currentround++;
+				p2s += roundsum;
+				
+			} else {
+				p2s += roundsum; // adds final round score
+				if (p1s > p2s) {
+					messageover.setText("Player One Won" + " Player one score: " + p1s + " Player two score: " + p2s);
+				} else if (p2s > p1s) {
+					messageover.setText("Player Two Won" + " Player one score: " + p1s + " Player two score: " + p2s);
+				} else {
+					messageover.setText("Its A Tie" + " Player one score: " + p1s + " Player two score: " + p2s);
+				}
+
 				stage.setScene(sceneover);
 			}
 
@@ -146,17 +171,41 @@ public class GUIDriver2 extends Application {
 				answer.setText("Bad match");
 
 			}
+			// checks to see if 7,8,9 are shut
+			if (markers[6].isDown() == true && markers[7].isDown() == true && markers[8].isDown() == true) {
+				singledie = true;
+
+			}
+			else {
+				// it is not a single die 
+				singledie= false;
+			}
+			// switches button text based on whether or not rolling one or two die 
+			if (singledie) {
+				btnRoll.setText("Roll 1 die");
+			} else {
+				btnRoll.setText("Roll 2 die");
+			}
 
 		});
 		btnRoll.setOnAction(e -> {
-		
-				int sumDie = d1.roll() + d2.roll();
-				dieResult.setText(String.valueOf(sumDie));
-				btnRoll.setDisable(true);
-				// enable to potential lockin button
 
-				lockIn.setDisable(false);
-			
+			int sumDie = 0;
+			// if just single die will only roll one die 
+			if (singledie) {
+				sumDie = d1.roll();
+			}
+			// rolls two die 
+			else {
+				sumDie = d1.roll() + d2.roll();
+			}
+
+			dieResult.setText(String.valueOf(sumDie));
+			btnRoll.setDisable(true);
+			// enable to potential lockin button
+
+			lockIn.setDisable(false);
+
 		});
 
 		btnBox.setAlignment(Pos.CENTER);
